@@ -1,19 +1,20 @@
-//#include "DHT.h"
+#include <DHT.h>
 #include <ESP8266WiFi.h>
 #include <PubSubClient.h>
 #include <SoftwareSerial.h>
 
-const char* ssid = "Redmi"; // SSID / nome da rede WI-FI que deseja se conectar
-const char* password = "12345678@"; // Senha da rede WI-FI que deseja se conectar
+const char* ssid = "nome"; // SSID / nome da rede WI-FI que deseja se conectar
+const char* password = "senha"; // Senha da rede WI-FI que deseja se conectar
 
 //#define WIFI_AP "lika_0"
 //#define WIFI_PASSWORD "RdD7InPv9"
 
-#define TOKEN "dRrvmF38r7BZiAq1g5A4"
+#define TOKEN "token do device no ThingsBoard"
 
 // DHT
-//#define DHTPIN 4
-//#define DHTTYPE DHT22
+#define DHTPIN 13
+#define DHTTYPE DHT11   // DHT 11
+//#define DHTTYPE DHT22 // DHT22
 
 //char thingsboardServer[] = "192.168.1.132";
 char thingsboardServer[] = "192.168.43.52";
@@ -24,7 +25,7 @@ char thingsboardServer[] = "192.168.43.52";
 WiFiClient espClient;
 
 // Initialize DHT sensor.
-//DHT dht(DHTPIN, DHTTYPE);
+DHT dht(DHTPIN, DHTTYPE);
 
 PubSubClient client(espClient);
 
@@ -68,7 +69,7 @@ void reconnect() {
 void setup() {
   // initialize serial for debugging
   Serial.begin(9600);
-  //dht.begin();
+  dht.begin();
   InitWiFi();
   client.setServer( thingsboardServer, 1883 );
   //lastSend = 0;
@@ -108,8 +109,8 @@ void getAndSendTemperatureAndHumidityData()
   float a = random(10, 40);
   //float h = dht.readHumidity();
   // Read temperature as Celsius (the default)
-  float t = random(17, 30);
-  //float t = dht.readTemperature();
+  //float t = random(17, 30);
+  float t = dht.readTemperature();
 
   // Check if any reads failed and exit early (to try again).
   if (isnan(a) || isnan(t)) {
